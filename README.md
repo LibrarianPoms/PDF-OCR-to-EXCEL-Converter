@@ -1,5 +1,5 @@
 # PDF-OCR-to-EXCEL-Converter
-                                                 Projet de stage fait par Aymane Bouras
+                                                 
 # PDF OCR to Excel Converter with PAC Interne Automation
 
 This application extracts tables and information from scanned PDF files (using OCR), generates styled Excel files, and provides automation for generating "PAC Interne" Word documents.
