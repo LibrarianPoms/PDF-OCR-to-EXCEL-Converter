@@ -35,7 +35,6 @@ Conçu et validé en conditions réelles au sein de la **Direction des Systèmes
 
 | Information | Détails |
 |---|---|
-| **Auteur** | **Aymane Bouras** |
 | **Établissement** | **EMSI** — École Marocaine des Sciences de l'Ingénieur (Filière Informatique et Réseaux) |
 | **Organisme d'Accueil** | **ORANGE (MEDITELECOM)** — Direction des Systèmes d'Information & Infrastructure |
 | **Service d'Accueil** | Solution Réingénierie des Sites & Projets Spéciaux |
