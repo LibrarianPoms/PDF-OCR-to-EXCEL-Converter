@@ -6,41 +6,19 @@
   <img src="https://img.shields.io/badge/OCR-EasyOCR_%26_PyMuPDF-FF6F00?style=for-the-badge&logo=pytorch&logoColor=white" alt="EasyOCR" />
   <img src="https://img.shields.io/badge/Data-Pandas_%26_OpenPyXL-150458?style=for-the-badge&logo=pandas&logoColor=white" alt="Pandas" />
   <img src="https://img.shields.io/badge/Automation-VBA_%26_Win32COM-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white" alt="Excel VBA" />
-  <img src="https://img.shields.io/badge/Institution-EMSI_%26_Orange_Maroc-FF6600?style=for-the-badge" alt="Orange & EMSI" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
+    <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
 </p>
-
-<p align="center">
-  <img src="docs/screenshots/emsi_logo.png" alt="EMSI" height="60" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="docs/screenshots/orange_logo.png" alt="Orange" height="60" />
-</p>
-
----
 
 ## 📌 Présentation Générale
 
 **PDF OCR to Excel Converter** est une solution logicielle complète développée en **Python (Flask)** pour automatiser la chaîne de traitement, d'extraction, de conversion et d'analyse budgétaire des **Bons de Commande (BDC)** numérisés sous forme d'images ou de PDF scannés.
 
-Conçu et validé en conditions réelles au sein de la **Direction des Systèmes d'Information & Infrastructure d'ORANGE Maroc (MEDITELECOM)**, ce système permet de remplacer la saisie manuelle fastidieuse et sujette aux erreurs par un pipeline d'ingénierie documentaire intelligent :
+Conçu et validé en conditions réelles de production documentaire, ce système permet de remplacer la saisie manuelle fastidieuse et sujette aux erreurs par un pipeline d'ingénierie documentaire intelligent :
 1. **Reconnaissance Optique de Caractères (OCR)** basée sur l'apprentissage profond (**EasyOCR**) pour extraire avec précision les métadonnées (fournisseurs, numéro de commande/contrat, dates) et les tableaux d'articles (désignations, quantités, prix unitaire, prix total).
 2. **Interface Web interactive (Flask)** permettant la vérification humaine, la modification à la volée et la validation des données extraites.
 3. **Génération automatisée de classeurs Excel multi-onglets structurés**, avec une feuille dédiée par bon de commande et calculs arithmétiques automatiques.
 4. **Tableau de bord budgétaire consolidé ("Main")** offrant une vue macroscopique et en temps réel des budgets engagés par fournisseur et contrat.
 5. **Génération automatisée de Procès-Verbaux de Réception ("PAC Interne")** via une macro VBA intégrée (`PACInterneModule`) et automatisation Word (`python-docx` / `win32com`).
-
----
-
-## 👥 Cadre Académique & Professionnel
-
-| Information | Détails |
-|---|---|
-| **Établissement** | **EMSI** — École Marocaine des Sciences de l'Ingénieur (Filière Informatique et Réseaux) |
-| **Organisme d'Accueil** | **ORANGE (MEDITELECOM)** — Direction des Systèmes d'Information & Infrastructure |
-| **Service d'Accueil** | Solution Réingénierie des Sites & Projets Spéciaux |
-| **Encadrant Professionnel** | **M. Rabii Hanif** (Manager Solution Réingénierie des Sites & Projets Spéciaux — Orange) |
-| **Cadre du Mémoire** | Mémoire de Projet de Fin d'Année (3ème année — Session Septembre 2025) |
-| **Année Universitaire** | 2024 – 2025 |
 
 ---
 
