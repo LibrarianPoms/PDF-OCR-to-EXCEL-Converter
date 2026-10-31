@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary and private operational files (CRITICAL: requested by user)
+temp/
+uploads/
+*.tmp
+*.bak
+
+# Private / confidential scan PDFs and test Excels
+*.pdf
+*.xlsx
+*.xlsm
+!docs/screenshots/*.png
+!docs/screenshots/*.jpg
+
+# Office binaries & archives (source report & slides)
+rapport soutenance/
+*.docx
+*.pptx
+*.rar
+*.zip
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log

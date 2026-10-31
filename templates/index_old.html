@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF OCR to Excel Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            background-color: #e9ecef;
+            border-color: #0056b3;
+        }
+        
+        .upload-area.dragover {
+            background-color: #e3f2fd;
+            border-color: #0056b3;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .upload-button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .upload-button:hover {
+            background-color: #0056b3;
+        }
+        
+        .upload-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .result-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .result-section h2 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .info-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #212529;
+        }
+        
+        .info-input:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: white;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .table-input {
+            width: 100%;
+            padding: 4px;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        
+        .download-button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .download-button:hover {
+            background-color: #218838;
+        }
+        
+        .add-row-button {
+            background-color: #17a2b8;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .add-row-button:hover {
+            background-color: #138496;
+        }
+        
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+        
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📄 PDF OCR to Excel Converter</h1>
+        
+        <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept=".pdf" multiple>
+            <div class="upload-icon">📤</div>
+            <p style="font-size: 18px; margin: 20px 0;">Glissez et déposez vos fichiers PDF ici</p>
+            <p style="color: #6c757d; margin-bottom: 20px;">ou</p>
+            <button class="upload-button" onclick="document.getElementById('fileInput').click()">
+                Choisir des fichiers
+            </button>
+            <div class="file-name" id="fileName"></div>
+        </div>
+        
+        <div class="error" id="errorMessage"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Extraction du texte en cours...</p>
+            <p style="color: #6c757d; font-size: 14px; margin-top: 10px;">Cela peut prendre quelques instants</p>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="result-section">
+                <h2>📋 Informations Générales</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Fournisseur</div>
+                        <input type="text" class="info-input" id="fournisseur" placeholder="Nom du fournisseur">
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Numéro de commande</div>
+                        <input type="text" class="info-input" id="numeroCommande" placeholder="Numéro de commande">
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Numéro de contrat</div>
+                        <input type="text" class="info-input" id="numeroContrat" placeholder="Numéro de contrat">
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Date de livraison</div>
+                        <input type="text" class="info-input" id="dateLivraison" placeholder="JJ/MM/AAAA">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2>📦 Liste des Articles</h2>
+                <div style="overflow-x: auto;">
+                    <table id="articlesTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 120px;">Pos/Article</th>
+                                <th style="width: 300px;">Désignation</th>
+                                <th style="width: 80px;">Quantité</th>
+                                <th style="width: 60px;">Unité</th>
+                                <th style="width: 100px;">Prix unitaire (DH)</th>
+                                <th style="width: 100px;">Prix total (DH)</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <button class="add-row-button" onclick="addArticleRow()">➕ Ajouter une ligne</button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="download-button" onclick="generateExcel()">
+                    📥 Générer Excel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFiles(files);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+        });
+        
+        function handleFiles(files) {
+            // Convert FileList to Array and filter for PDF files
+            const pdfFiles = Array.from(files).filter(file => file.name.endsWith('.pdf'));
+            
+            if (pdfFiles.length === 0) {
+                showError('Veuillez sélectionner au moins un fichier PDF');
+                return;
+            }
+            
+            if (pdfFiles.length !== files.length) {
+                showError(`${files.length - pdfFiles.length} fichier(s) ignoré(s) - seuls les fichiers PDF sont acceptés`);
+            }
+            
+            if (pdfFiles.length === 1) {
+                fileName.textContent = `Fichier sélectionné: ${pdfFiles[0].name}`;
+            } else {
+                fileName.textContent = `${pdfFiles.length} fichiers PDF sélectionnés`;
+            }
+            
+            uploadFiles(pdfFiles);
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        function uploadFiles(files) {
+            const formData = new FormData();
+            // Append all files with the key 'files' to match backend expectation
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+            
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                
+                if (data.success) {
+                    if (data.multiple_files) {
+                        displayMultipleResults(data.results);
+                    } else {
+                        displaySingleResult(data.results[0].data);
+                    }
+                    results.style.display = 'block';
+                } else {
+                    showError(data.error || 'Une erreur est survenue');
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                showError('Erreur de connexion au serveur');
+                console.error('Error:', error);
+            });
+        }
+        
+        let currentExcelFile = null;
+        
+        function displayMultipleResults(results) {
+            results.forEach((result, index) => {
+                const resultSection = document.createElement('div');
+                resultSection.className = 'result-section';
+                const sectionTitle = document.createElement('h2');
+                sectionTitle.textContent = `📄 Résultats pour ${result.filename}`;
+                resultSection.appendChild(sectionTitle);
+
+                const infoGrid = document.createElement('div');
+                infoGrid.className = 'info-grid';
+
+                ['fournisseur', 'numero_commande', 'numero_contrat', 'date_livraison'].forEach(field => {
+                    const infoItem = document.createElement('div');
+                    infoItem.className = 'info-item';
+                    const label = document.createElement('div');
+                    label.className = 'info-label';
+                    label.textContent = field.replace('_', ' ').toUpperCase();
+                    infoItem.appendChild(label);
+                    const input = document.createElement('input');
+                    input.className = 'info-input';
+                    input.value = result.data[field] || '';
+                    infoItem.appendChild(input);
+                    infoGrid.appendChild(infoItem);
+                });
+
+                resultSection.appendChild(infoGrid);
+
+                const tableSection = document.createElement('div');
+                tableSection.style.overflowX = 'auto';
+                const table = document.createElement('table');
+
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                ['Pos/Article', 'Désignation', 'Quantité', 'Unité', 'Prix unitaire (DH)', 'Prix total (DH)', 'Action'].forEach(col => {
+                    const th = document.createElement('th');
+                    th.textContent = col;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                result.data.articles.forEach(article => {
+                    const row = document.createElement('tr');
+                    ['pos_article', 'designation', 'quantite', 'unite', 'prix_unitaire', 'prix_total'].forEach(key => {
+                        const td = document.createElement('td');
+                        const input = document.createElement('input');
+                        input.className = 'table-input';
+                        input.value = article[key] || '';
+                        td.appendChild(input);
+                        row.appendChild(td);
+                    });
+                    const actionTd = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-button';
+                    deleteButton.textContent = 'X';
+                    deleteButton.onclick = () => row.remove();
+                    actionTd.appendChild(deleteButton);
+                    row.appendChild(actionTd);
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                tableSection.appendChild(table);
+                resultSection.appendChild(tableSection);
+
+                const addRowButton = document.createElement('button');
+                addRowButton.className = 'add-row-button';
+                addRowButton.textContent = '➕ Ajouter une ligne';
+                addRowButton.onclick = () => addArticleRow(tbody);
+                resultSection.appendChild(addRowButton);
+
+                results.appendChild(resultSection);
+            });
+        }
+        
+        function displayResults(data) {
+            // Fill in the general information inputs
+            document.getElementById('fournisseur').value = data.fournisseur || '';
+            document.getElementById('numeroCommande').value = data.numero_commande || '';
+            document.getElementById('numeroContrat').value = data.numero_contrat || '';
+            document.getElementById('dateLivraison').value = data.date_livraison || '';
+            
+            const tbody = document.querySelector('#articlesTable tbody');
+            tbody.innerHTML = '';
+            
+            if (data.articles && data.articles.length > 0) {
+                data.articles.forEach((article, index) => {
+                    addArticleRow(article);
+                });
+            } else {
+                // Add empty rows if no articles found
+                for (let i = 0; i < 6; i++) {
+                    addArticleRow();
+                }
+            }
+            
+            // Store the Excel file reference  
+            currentExcelFile = data.excel_file;
+        }
+        
+        function addArticleRow(article = {}) {
+            const tbody = document.querySelector('#articlesTable tbody');
+            const row = tbody.insertRow();
+            
+            // Pos Article (just the position number like 010, 020, etc.)
+            const posCell = row.insertCell(0);
+            posCell.innerHTML = `<input type="text" class="table-input" value="${article.pos_article || article.pos || ''}">`;
+            
+            // Designation
+            const designationCell = row.insertCell(1);
+            designationCell.innerHTML = `<input type="text" class="table-input" value="${article.designation || ''}">`;
+            
+            // Quantity
+            const quantityCell = row.insertCell(2);
+            quantityCell.innerHTML = `<input type="number" step="1" class="table-input quantity-input" value="${article.quantite || ''}" oninput="calculateTotal(this)" placeholder="0">`;
+            
+            // Unit
+            const unitCell = row.insertCell(3);
+            unitCell.innerHTML = `<input type="text" class="table-input" value="${article.unite || ''}" placeholder="UNI">`;
+            
+            // Unit Price
+            const priceCell = row.insertCell(4);
+            priceCell.innerHTML = `<input type="number" step="0.01" class="table-input price-input" value="${article.prix_unitaire || ''}" oninput="calculateTotal(this)" placeholder="0.00">`;
+            
+            // Total Price (calculated automatically)
+            const totalCell = row.insertCell(5);
+            const calculatedTotal = article.prix_unitaire && article.quantite ? (parseFloat(article.prix_unitaire) * parseFloat(article.quantite)).toFixed(2) : (article.prix_total || '');
+            totalCell.innerHTML = `<input type="text" class="table-input total-input" value="${calculatedTotal}" readonly style="background-color: #f8f9fa;" placeholder="0.00 DH">`;
+            
+            // Delete button
+            const actionCell = row.insertCell(6);
+            actionCell.innerHTML = `<button class="delete-button" onclick="deleteRow(this)">X</button>`;
+        }
+        
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+        
+        function calculateTotal(input) {
+            // Find the row containing this input
+            const row = input.closest('tr');
+            const quantityInput = row.querySelector('.quantity-input');
+            const priceInput = row.querySelector('.price-input');
+            const totalInput = row.querySelector('.total-input');
+            
+            // Get values
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            
+            // Calculate total
+            const total = (quantity * price).toFixed(2);
+            totalInput.value = total;
+        }
+        
+        function generateExcel() {
+            // Collect all data from inputs
+            const data = {
+                fournisseur: document.getElementById('fournisseur').value,
+                numero_commande: document.getElementById('numeroCommande').value,
+                numero_contrat: document.getElementById('numeroContrat').value,
+                date_livraison: document.getElementById('dateLivraison').value,
+                articles: []
+            };
+            
+            // Collect articles data
+            const rows = document.querySelectorAll('#articlesTable tbody tr');
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('.table-input');
+                if (inputs[0].value || inputs[1].value) { // If pos_article or designation is filled
+                    data.articles.push({
+                        pos_article: inputs[0].value,
+                        designation: inputs[1].value,
+                        quantite: inputs[2].value,
+                        unite: inputs[3].value,
+                        prix_unitaire: inputs[4].value,
+                        prix_total: inputs[5].value
+                    });
+                }
+            });
+            
+            // Send data to server
+            fetch('/generate-excel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // Download the file
+                    window.location.href = `/download/${result.excel_file}`;
+                } else {
+                    showError('Erreur lors de la génération du fichier Excel');
+                }
+            })
+            .catch(error => {
+                showError('Erreur de connexion au serveur');
+                console.error('Error:', error);
+            });
+        }
+        
+    </script>
+</body>
+</html>

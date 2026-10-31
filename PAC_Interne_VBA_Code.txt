@@ -1,0 +1,40 @@
+Sub OpenPACInterne()
+    Dim wordApp As Object
+    Dim wordDoc As Object
+    Dim docPath As String
+    
+    ' Path to the Word document (same folder as this Excel file)
+    docPath = ThisWorkbook.Path & "\Exemple Pac Interne (2).doc"
+    
+    On Error Resume Next
+    
+    ' Try to get existing Word application or create new one
+    Set wordApp = GetObject(, "Word.Application")
+    If wordApp Is Nothing Then
+        Set wordApp = CreateObject("Word.Application")
+    End If
+    
+    ' Make Word visible
+    wordApp.Visible = True
+    
+    ' Check if document exists and open it
+    If Dir(docPath) <> "" Then
+        Set wordDoc = wordApp.Documents.Open(docPath)
+        MsgBox "PAC Interne document opened successfully for editing!", vbInformation, "PAC Interne"
+    Else
+        MsgBox "Document 'Exemple Pac Interne (2).doc' not found in the same folder!", vbExclamation, "File Not Found"
+    End If
+    
+    On Error GoTo 0
+End Sub
+
+'Instructions to use this code:
+'1. Open PAC_Interne_Button.xlsm
+'2. Press Alt+F11 to open VBA editor
+'3. Right-click in Project Explorer > Insert > Module
+'4. Copy and paste this entire code
+'5. Close VBA editor (Alt+Q)
+'6. Go to Developer tab > Insert > Button (Form Control)
+'7. Draw the button on the worksheet
+'8. In the "Assign Macro" dialog, select "OpenPACInterne"
+'9. Right-click the button > Edit Text > Change to "PAC interne"

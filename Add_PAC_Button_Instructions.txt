@@ -1,0 +1,60 @@
+HOW TO ADD "PAC INTERNE" BUTTON TO YOUR EXTRACTED EXCEL FILE:
+
+1. Open: combined_pdfs_with_PAC_button.xlsx
+
+2. Save it as macro-enabled:
+   - File → Save As
+   - Choose "Excel Macro-Enabled Workbook (.xlsm)"
+   - Name it: combined_pdfs_with_PAC_macro.xlsm
+
+3. Enable Developer Tab (if not visible):
+   - File → Options → Customize Ribbon
+   - Check "Developer" box → OK
+
+4. Add the VBA code:
+   - Press Alt+F11 (opens VBA editor)
+   - Right-click on your workbook name → Insert → Module
+   - Copy and paste this code:
+
+Sub OpenPACInterne()
+    Dim wordApp As Object
+    Dim wordDoc As Object
+    Dim docPath As String
+    
+    ' Full path to your Word document
+    docPath = "C:\Users\HELLO\Downloads\test bon\Exemple Pac Interne (2).doc"
+    
+    On Error Resume Next
+    
+    ' Try to get existing Word application or create new one
+    Set wordApp = GetObject(, "Word.Application")
+    If wordApp Is Nothing Then
+        Set wordApp = CreateObject("Word.Application")
+    End If
+    
+    ' Make Word visible
+    wordApp.Visible = True
+    
+    ' Open the document
+    If Dir(docPath) <> "" Then
+        Set wordDoc = wordApp.Documents.Open(docPath)
+        MsgBox "PAC Interne document opened for editing!", vbInformation, "PAC Interne"
+    Else
+        MsgBox "Document not found: " & docPath, vbExclamation, "File Not Found"
+    End If
+    
+    On Error GoTo 0
+End Sub
+
+5. Close VBA editor (Alt+Q)
+
+6. Add the button:
+   - Go to Developer tab
+   - Click "Insert" → Choose "Button" (Form Control)
+   - Draw the button on your worksheet
+   - In "Assign Macro" dialog, select "OpenPACInterne"
+   - Right-click button → "Edit Text" → Type "PAC interne"
+
+7. Save your file
+
+Now when you click the "PAC interne" button, it will open your Word document for editing!
